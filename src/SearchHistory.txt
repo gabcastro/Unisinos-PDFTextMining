@@ -1,0 +1,6 @@
+****************************************
+Número da consulta: 1
+Nome do documento: Enunciado.pdf
+String de busca: desenvolvimento AND aplicação
+Ocorrências: desenvolvimento (1), aplicação (3)
+****************************************

@@ -1,0 +1,7 @@
+###############
+# Directories #
+###############
+bin/
+obj/
+.vscode/
+.vs/
