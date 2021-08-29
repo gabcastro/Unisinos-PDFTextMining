@@ -9,7 +9,8 @@ namespace PDFTextMining.Runtime.PdfManager
 
     class PdfReaderRequest
     {
-        public string PdfName { get; set; }
+        public string PdfPath { get; set; }
+        public string QueryString { get; set; }
     }
 
     class PdfReaderResponse

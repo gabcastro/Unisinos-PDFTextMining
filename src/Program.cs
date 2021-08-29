@@ -24,7 +24,7 @@ namespace PDFTextMining
 
             try
             {
-                MainAsync(args).Wait();
+                MainAsync().Wait();
             }
             catch (Exception e)
             {
@@ -32,7 +32,7 @@ namespace PDFTextMining
             }
         }
 
-        static async Task MainAsync(string[] args)
+        static async Task MainAsync()
         {
             // Create service collection
             Log.Information("Creating service collection");

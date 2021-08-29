@@ -1,10 +1,17 @@
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+
 namespace PDFTextMining.Runtime.PdfManager
 {
     class PdfReader : IPdfReader
     {
-        public PdfReader()
+        private readonly ILogger<PdfReader> _logger;
+        private readonly IConfigurationRoot _config;
+        
+        public PdfReader(IConfigurationRoot config, ILoggerFactory loggerFactory)
         {
-            
+            _config = config;
+            _logger = loggerFactory.CreateLogger<PdfReader>();
         }
 
         public dynamic Execute(dynamic inputData)
@@ -14,7 +21,7 @@ namespace PDFTextMining.Runtime.PdfManager
 
         public PdfReaderResponse Generate(PdfReaderRequest request)
         {
-            throw new System.NotImplementedException();
+            return new PdfReaderResponse { PdfName = "request.PdfName" };
         }
     }
 }
