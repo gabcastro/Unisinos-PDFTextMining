@@ -6,6 +6,8 @@ using iText.Kernel.Pdf.Canvas.Parser;
 using System;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
+using System.Text;
+using System.Globalization;
 
 namespace PDFTextMining.Runtime.PdfManager
 {
@@ -13,11 +15,13 @@ namespace PDFTextMining.Runtime.PdfManager
     {
         private readonly ILogger<PdfParse> _logger;
         private readonly IConfigurationRoot _config;
+        private Dictionary<string, int> KeyWords;
         
         public PdfParse(IConfigurationRoot config, ILoggerFactory loggerFactory)
         {
             _config = config;
             _logger = loggerFactory.CreateLogger<PdfParse>();
+            KeyWords = new Dictionary<string, int>();
         }
 
         public dynamic Execute(dynamic inputData)
@@ -27,28 +31,46 @@ namespace PDFTextMining.Runtime.PdfManager
 
         public PdfParseResponse Generate(PdfParseRequest request)
         {
-            Dictionary<string, int> keyValues = new Dictionary<string, int>();
-            int op;
+            try
+            {
+                int op;
 
-            if (Regex.IsMatch(request.QueryString, @"\bAND\b") || Regex.IsMatch(request.QueryString, @"\bOR\b"))
-                (keyValues, op) = SplitQuery(request.QueryString);
-            else{
-                keyValues.Add(request.QueryString, 0);
-                op = 0;
-            } 
+                if (Regex.IsMatch(request.QueryString, @"\bAND\b") && Regex.IsMatch(request.QueryString, @"\bOR\b"))
+                    throw new Exception();
+                if (Regex.IsMatch(request.QueryString, @"\bAND\b") || Regex.IsMatch(request.QueryString, @"\bOR\b"))
+                    (KeyWords, op) = SplitQuery(request.QueryString);
+                else{
+                    KeyWords.Add(request.QueryString, 0);
+                    op = 0;
+                } 
 
-            keyValues = CountOccurrencesWords(keyValues, request.PdfPath);
+                CountOccurrencesWords(request.PdfPath);
+                CheckOperation(op);
 
-            var lisNamePdf = request.PdfPath.Split(@"\");
+                var lisNamePdf = request.PdfPath.Split(@"\");
 
-            return new PdfParseResponse {
-                PdfName = lisNamePdf[^1],
-                QueryString = request.QueryString,
-                WordsCount = ToString(keyValues)
-            };
+                return new PdfParseResponse {
+                    PdfName = lisNamePdf[^1],
+                    QueryString = request.QueryString,
+                    WordsCount = ToString(KeyWords)
+                };   
+            }
+            catch (Exception e)
+            {
+                _logger.LogError("Error message: {0}", e.Message);
+                _logger.LogTrace(e, e.Message);
+                throw;
+            }
+            
         }
 
-        private Dictionary<string, int> CountOccurrencesWords(Dictionary<string, int> dict, string pathPdf)
+        /// <summary>
+        /// Responsability:
+        ///     Read pdf file
+        ///     Remove accents from all words
+        ///     Compare with query string and count frequency of each word
+        /// </summary>
+        private void CountOccurrencesWords(string pathPdf)
         {
             var tempDict = new Dictionary<string, int>();
 
@@ -63,15 +85,10 @@ namespace PDFTextMining.Runtime.PdfManager
                 
                 foreach(string line in lines)
                 {
-                    foreach (var k in dict)
+                    foreach (var k in KeyWords)
                     {
-                        // var teste = line.Split(" ").Where(
-                        //     p => compareInfo.IndexOf(source: p, value: k.Key, CompareOptions.IgnoreNonSpace) > -1
-                        // );
-                        // int iii = 0;
-                        
-                        string lowerCaseTextString = line.ToLower();
-                        string lowerCaseWord = k.Key.ToLower();
+                        string lowerCaseTextString = RemoveDiacritics(line.ToLower());
+                        string lowerCaseWord = RemoveDiacritics(k.Key.ToLower());
 
                         int index = 0;
                         int diffLineWord = lowerCaseTextString.Length - lowerCaseWord.Length;
@@ -93,9 +110,37 @@ namespace PDFTextMining.Runtime.PdfManager
             }
 
             foreach (var i in tempDict)
-                dict[i.Key] = i.Value;
+                KeyWords[i.Key] = i.Value;
+        }
 
-            return dict;
+        /// <summary>
+        /// If is an operation of AND, than will be set to zero all elements
+        /// </summary>
+        private void CheckOperation(int op)
+        {
+            var tempDict = new Dictionary<string, int>();
+
+            if (op == 1) 
+            {
+                bool setZeroAll = false;
+
+                foreach (var i in KeyWords)
+                {
+                    if (i.Value == 0)
+                    {
+                        setZeroAll = true;
+                        break;
+                    }
+                }
+
+                if (setZeroAll) 
+                {
+                    foreach (var i in KeyWords) 
+                        tempDict.Add(i.Key, 0);
+            
+                    KeyWords = tempDict;
+                }
+            }
         }
 
 
@@ -112,13 +157,13 @@ namespace PDFTextMining.Runtime.PdfManager
             if (Regex.IsMatch(queryString, @"\bAND\b"))
             {
                 foreach (var i in queryString.Split("AND"))
-                    keyValues.Add(i, 0);
+                    keyValues.Add(i.Trim(), 0);
                 op = 1;
             }
             else
             {
                 foreach(var i in queryString.Split("OR"))
-                    keyValues.Add(i, 0);
+                    keyValues.Add(i.Trim(), 0);
                 op = 2;
             } 
 
@@ -133,6 +178,26 @@ namespace PDFTextMining.Runtime.PdfManager
                 strOccurrences = strOccurrences + i.Key + "(" + i.Value + "), ";
 
             return strOccurrences[0..^2];
+        }
+
+        /// <summary>
+        /// Remove accents from a string
+        /// <summary>
+        private string RemoveDiacritics(string text) 
+        {
+            var normalizedString = text.Normalize(NormalizationForm.FormD);
+            var stringBuilder = new StringBuilder();
+
+            foreach (var c in normalizedString)
+            {
+                var unicodeCategory = CharUnicodeInfo.GetUnicodeCategory(c);
+                if (unicodeCategory != UnicodeCategory.NonSpacingMark)
+                {
+                    stringBuilder.Append(c);
+                }
+            }
+
+            return stringBuilder.ToString().Normalize(NormalizationForm.FormC);
         }
     }
 }

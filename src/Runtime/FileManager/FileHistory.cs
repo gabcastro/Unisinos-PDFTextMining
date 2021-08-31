@@ -42,8 +42,7 @@ namespace PDFTextMining.Runtime.FileManager
                 throw e;
             }
 
-
-            _logger.LogInformation("Novo registro terá ID: {0}", IdSearch);
+            _logger.LogInformation("Was recorded a new register in the history file, ID: {0}", IdSearch);
 
             return new FileResponse { Val = 0.ToString() };
         }

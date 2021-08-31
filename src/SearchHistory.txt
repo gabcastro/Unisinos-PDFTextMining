@@ -4,3 +4,39 @@ Nome do documento: Enunciado.pdf
 String de busca: desenvolvimento AND aplicação
 Ocorrências: desenvolvimento (1), aplicação (3)
 ****************************************
+****************************************
+Número da consulta: 2
+Nome do documento: teste.pdf
+String de busca: Aplicação AND implemensstação AND poderá
+Ocorrências: Aplicação(0), implemensstação(0), poderá(0)
+****************************************
+****************************************
+Número da consulta: 3
+Nome do documento: teste.pdf
+String de busca: Aplicação OR implemensstação OR poderá
+Ocorrências: Aplicação(4), implemensstação(0), poderá(1)
+****************************************
+****************************************
+Número da consulta: 4
+Nome do documento: teste.pdf
+String de busca: aplicação AND implemensstação AND poderá
+Ocorrências: aplicação(0), implemensstação(0), poderá(0)
+****************************************
+****************************************
+Número da consulta: 5
+Nome do documento: teste.pdf
+String de busca: aplicação AND implemensstação AND poderá
+Ocorrências: aplicação(0), implemensstação(0), poderá(0)
+****************************************
+****************************************
+Número da consulta: 6
+Nome do documento: teste.pdf
+String de busca: Aplicação AND implementação AND poderá AND algo
+Ocorrências: Aplicação(4), implementação(1), poderá(1), algo(2)
+****************************************
+****************************************
+Número da consulta: 7
+Nome do documento: Enunciado - Projeto 1.pdf
+String de busca: aplicação AND implementação AND string
+Ocorrências: aplicação(50), implementação(12), string(10)
+****************************************

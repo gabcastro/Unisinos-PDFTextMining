@@ -16,6 +16,9 @@ namespace PDFTextMining.Pipelining
             Filters = new Queue<IFilter>();    
         }
 
+        /// <summary>
+        /// Enqueue a new function that will be call from the queue
+        /// </summary>
         public Pipeline<TInput, TOutput> Add(IFilter filter)
         {
             Filters.Enqueue(filter);
@@ -23,6 +26,9 @@ namespace PDFTextMining.Pipelining
             return this;
         }
 
+        /// <summary>
+        /// Enqueue a new function, but with a respect type as parameter to return a new type that will be use in the next step 
+        /// </summary>
         public Pipeline<TInput, TOutput> Add<T1, T2>(Func<T1, T2> filter)
         {
             var wrappedFilter = new LambdaFilter<T1, T2>(filter);

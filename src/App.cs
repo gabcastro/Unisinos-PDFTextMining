@@ -24,19 +24,19 @@ namespace PDFTextMining
 
         public async Task Execute()
         {
-            _logger.LogInformation("Digite o caminho do arquivo .pdf");
-            // string pdfPath = Console.ReadLine();
-            string pdfPath = @"D:\Downloads\coisas pessoais\teste.pdf";
+            _logger.LogInformation("Type the .pdf path");
+            string pdfPath = Console.ReadLine();
+            // string pdfPath = @"D:\Downloads\coisas pessoais\teste.pdf";
 
             if (!File.Exists(path: pdfPath))
             {
-                _logger.LogError("Caminho inválido, nenhum pdf com esse nome encontrado!");
+                _logger.LogError("Invalid path, pdf not found!");
                 throw new Exception();
             }
 
-            _logger.LogInformation("Digite a string de busca");
-            // string queryString = Console.ReadLine();
-            string queryString = "Aplicação";
+            _logger.LogInformation("Type a query string");
+            string queryString = Console.ReadLine();
+            // string queryString = "Aplicação AND implementação AND poderá AND algo";
 
             Generate(pdfPath, queryString);
         }
