@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using PDFTextMining.Pipelining;
 
 namespace PDFTextMining.Runtime.FileManager
@@ -9,8 +10,9 @@ namespace PDFTextMining.Runtime.FileManager
 
     class FileRequest
     {
-        public string DirPath { get; set; }
-        public string FileName { get; set; }
+        public string PdfName { get; set; }
+        public string QueryString { get; set; }
+        public string OccurrencesWords { get; set; }
     }
 
     class FileResponse

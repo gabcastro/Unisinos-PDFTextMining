@@ -34,7 +34,7 @@ namespace PDFTextMining.Runtime.FileManager
             try
             {
                 ReadFile(logFileName);
-                SaveSearchResult(logFileName);
+                SaveSearchResult(logFileName, request.PdfName, request.QueryString, request.OccurrencesWords);
             }
             catch (Exception e)
             {
@@ -62,12 +62,15 @@ namespace PDFTextMining.Runtime.FileManager
             IdSearch += 1;
         }
 
-        private void SaveSearchResult(string fullPathFile)
+        private void SaveSearchResult(string fullPathFile, string pdfName, string queryString, string occurrencesWords)
         {
             StreamWriter streamWriter = new StreamWriter(path: fullPathFile, append: true, encoding: Encoding.UTF8);
             using StreamWriter file = streamWriter;
             file.WriteLine("****************************************");
             file.WriteLine("Número da consulta: {0}", IdSearch);
+            file.WriteLine("Nome do documento: {0}", pdfName);
+            file.WriteLine("String de busca: {0}", queryString);
+            file.WriteLine("Ocorrências: {0}", occurrencesWords);
             file.WriteLine("****************************************");
         }
     }

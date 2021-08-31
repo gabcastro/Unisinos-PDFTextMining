@@ -25,8 +25,9 @@ namespace PDFTextMining
         public async Task Execute()
         {
             _logger.LogInformation("Digite o caminho do arquivo .pdf");
-            string pdfPath = Console.ReadLine();
-            
+            // string pdfPath = Console.ReadLine();
+            string pdfPath = @"D:\Downloads\coisas pessoais\teste.pdf";
+
             if (!File.Exists(path: pdfPath))
             {
                 _logger.LogError("Caminho inválido, nenhum pdf com esse nome encontrado!");
@@ -34,7 +35,8 @@ namespace PDFTextMining
             }
 
             _logger.LogInformation("Digite a string de busca");
-            string queryString = Console.ReadLine();
+            // string queryString = Console.ReadLine();
+            string queryString = "Aplicação";
 
             Generate(pdfPath, queryString);
         }
@@ -43,9 +45,9 @@ namespace PDFTextMining
         {
             _logger.LogInformation("Pipeline setup...");
 
-            var p = new Pipeline<PdfReaderRequest, FileResponse>()
-                .Add(new PdfReader(_config, _loggerFactory))
-                .Add<PdfReaderResponse, FileRequest>(Convert)
+            var p = new Pipeline<PdfParseRequest, FileResponse>()
+                .Add(new PdfParse(_config, _loggerFactory))
+                .Add<PdfParseResponse, FileRequest>(Convert)
                 .Add(new FileHistory(_config, _loggerFactory))
             ;
 
@@ -54,9 +56,8 @@ namespace PDFTextMining
             using (p) 
             {
                 // first request
-                var request = new PdfReaderRequest
+                var request = new PdfParseRequest
                 {
-                    // PdfName = @"D:\Downloads\coisas pessoais\unisinos\desenvolvimento de app para mineracao de texto em c#\Enunciado - Projeto 1.pdf"
                     PdfPath = pdfPath,
                     QueryString = queryString
                 };
@@ -65,12 +66,13 @@ namespace PDFTextMining
             }    
         }
 
-        private FileRequest Convert(PdfReaderResponse input)
+        private FileRequest Convert(PdfParseResponse input)
         {
             return new FileRequest
             {
-                DirPath = "teste",
-                FileName = "teste22"
+                PdfName = input.PdfName,
+                QueryString = input.QueryString,
+                OccurrencesWords = input.WordsCount
             };
         }
 
