@@ -12,6 +12,8 @@ namespace PDFTextMining.Runtime.PdfManager
     {
         public string PdfPath { get; set; }
         public string QueryString { get; set; }
+        public Dictionary<string, int> KeyWords { get; set; }
+        public int Operation { get; set; }
     }
 
     class PdfParseResponse

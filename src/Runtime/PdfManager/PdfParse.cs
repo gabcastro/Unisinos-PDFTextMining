@@ -4,7 +4,6 @@ using iText.Kernel.Pdf;
 using iText.Kernel.Pdf.Canvas.Parser.Listener;
 using iText.Kernel.Pdf.Canvas.Parser;
 using System;
-using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using System.Text;
 using System.Globalization;
@@ -33,19 +32,10 @@ namespace PDFTextMining.Runtime.PdfManager
         {
             try
             {
-                int op;
-
-                if (Regex.IsMatch(request.QueryString, @"\bAND\b") && Regex.IsMatch(request.QueryString, @"\bOR\b"))
-                    throw new Exception();
-                if (Regex.IsMatch(request.QueryString, @"\bAND\b") || Regex.IsMatch(request.QueryString, @"\bOR\b"))
-                    (KeyWords, op) = SplitQuery(request.QueryString);
-                else{
-                    KeyWords.Add(request.QueryString, 0);
-                    op = 0;
-                } 
+                KeyWords = request.KeyWords;
 
                 CountOccurrencesWords(request.PdfPath);
-                CheckOperation(op);
+                CheckOperation(request.Operation);
 
                 var lisNamePdf = request.PdfPath.Split(@"\");
 
@@ -58,10 +48,8 @@ namespace PDFTextMining.Runtime.PdfManager
             catch (Exception e)
             {
                 _logger.LogError("Error message: {0}", e.Message);
-                _logger.LogTrace(e, e.Message);
                 throw;
             }
-            
         }
 
         /// <summary>
@@ -141,33 +129,6 @@ namespace PDFTextMining.Runtime.PdfManager
                     KeyWords = tempDict;
                 }
             }
-        }
-
-
-        /// <summary>
-        /// This method will return a tuple with:
-        ///     a dictionary that represent each word to find 
-        ///     an integer that represent what operation is
-        /// </summary>
-        private Tuple<Dictionary<string, int>, int> SplitQuery(string queryString)
-        {
-            var keyValues = new Dictionary<string, int>();
-            int op;
-
-            if (Regex.IsMatch(queryString, @"\bAND\b"))
-            {
-                foreach (var i in queryString.Split("AND"))
-                    keyValues.Add(i.Trim(), 0);
-                op = 1;
-            }
-            else
-            {
-                foreach(var i in queryString.Split("OR"))
-                    keyValues.Add(i.Trim(), 0);
-                op = 2;
-            } 
-
-            return Tuple.Create(keyValues, op);
         }
 
         private string ToString(Dictionary<string, int> occurrencesWords)

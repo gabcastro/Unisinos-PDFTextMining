@@ -2,7 +2,7 @@
 
 ## Descrição da aplicação
 
-Consiste uma aplicação para localizar palavras informadas pelo usuário em documentos PDF. 
+Consiste em uma aplicação para localizar palavras informadas pelo usuário, em documentos PDF. 
 
 ## Como funciona?
 

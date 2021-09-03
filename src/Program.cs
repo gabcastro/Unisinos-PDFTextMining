@@ -4,8 +4,6 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using PDFTextMining.Runtime;
-using PDFTextMining.Runtime.FileManager;
 using Serilog;
 
 namespace PDFTextMining
@@ -51,7 +49,7 @@ namespace PDFTextMining
             }
             catch (Exception ex)
             {
-                Log.Fatal("Error running service ", ex.Message);
+                Log.Fatal("Error running ... {0}", ex.Message);
                 throw ex;
             }
             finally
